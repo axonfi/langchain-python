@@ -24,7 +24,21 @@ Before using this toolkit, you need an Axon vault and a registered bot:
 
 Your wallet (vault owner) stays secure — the bot key can only sign intents within the policies you set. The bot never touches gas or holds funds.
 
-**Supported chains:** Base, Arbitrum (mainnet + testnets).
+## Supported Chains
+
+### Mainnet
+
+| Chain        | ID    |
+| ------------ | ----- |
+| Base         | 8453  |
+| Arbitrum One | 42161 |
+
+### Testnet
+
+| Chain            | ID     |
+| ---------------- | ------ |
+| Base Sepolia     | 84532  |
+| Arbitrum Sepolia | 421614 |
 
 ## Quick Start
 
