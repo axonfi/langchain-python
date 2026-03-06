@@ -37,3 +37,13 @@ Homepage = "https://axonfi.xyz"
 Documentation = "https://axonfi.xyz/docs"
 Repository = "https://github.com/axonfi/langchain-python"
 Issues = "https://github.com/axonfi/langchain-python/issues"
+
+[tool.ruff]
+target-version = "py310"
+line-length = 120
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "W", "UP"]
+
+[tool.ruff.format]
+quote-style = "double"

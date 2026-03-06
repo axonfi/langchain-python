@@ -2,13 +2,13 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Optional, Type
+from typing import TYPE_CHECKING
 
 from langchain_core.tools import BaseTool
 from pydantic import BaseModel, Field
 
 if TYPE_CHECKING:
-    from axonfi import AxonClientSync
+    pass
 
 
 # ── Pydantic input schemas ──────────────────────────────────────────────────
@@ -20,7 +20,7 @@ class PayInput(BaseModel):
     to: str = Field(description="Recipient address (0x...)")
     token: str = Field(description="Token symbol (USDC, WETH, etc.) or contract address")
     amount: float = Field(description="Human-readable amount (e.g. 5.0 for 5 USDC)")
-    memo: Optional[str] = Field(default=None, description="Optional payment description")
+    memo: str | None = Field(default=None, description="Optional payment description")
 
 
 class BalanceInput(BaseModel):
@@ -34,8 +34,8 @@ class SwapInput(BaseModel):
 
     to_token: str = Field(description="Target token symbol (e.g. WETH)")
     min_to_amount: float = Field(description="Minimum amount of target token to receive")
-    from_token: Optional[str] = Field(default=None, description="Source token (default: USDC)")
-    max_from_amount: Optional[float] = Field(default=None, description="Maximum source token to spend")
+    from_token: str | None = Field(default=None, description="Source token (default: USDC)")
+    max_from_amount: float | None = Field(default=None, description="Maximum source token to spend")
 
 
 class ExecuteInput(BaseModel):
@@ -45,7 +45,7 @@ class ExecuteInput(BaseModel):
     call_data: str = Field(description="ABI-encoded function calldata (0x...)")
     token: str = Field(description="Token to approve for the protocol")
     amount: float = Field(description="Approval amount in human-readable units")
-    memo: Optional[str] = Field(default=None, description="Optional description")
+    memo: str | None = Field(default=None, description="Optional description")
 
 
 class PollInput(BaseModel):
@@ -97,7 +97,7 @@ class AxonPay(BaseTool):
         "amount, and an optional memo. Returns transaction hash if approved, "
         "or a request ID if the payment requires human review."
     )
-    args_schema: Type[BaseModel] = PayInput
+    args_schema: type[BaseModel] = PayInput
     client: object = Field(exclude=True)
 
     def _run(self, to: str, token: str, amount: float, memo: str | None = None) -> str:
@@ -110,10 +110,9 @@ class AxonBalance(BaseTool):
 
     name: str = "axon_balance"
     description: str = (
-        "Check how much of a token the vault holds. "
-        "Returns the balance in human-readable units (e.g. '125.50 USDC')."
+        "Check how much of a token the vault holds. Returns the balance in human-readable units (e.g. '125.50 USDC')."
     )
-    args_schema: Type[BaseModel] = BalanceInput
+    args_schema: type[BaseModel] = BalanceInput
     client: object = Field(exclude=True)
     chain_id: int = Field(exclude=True)
 
@@ -125,7 +124,7 @@ class AxonBalance(BaseTool):
 
         info = KNOWN_TOKENS.get(token.upper())
         if info:
-            human = balance_raw / (10 ** info.decimals)
+            human = balance_raw / (10**info.decimals)
             return f"Vault holds {human:.6g} {token.upper()}"
         return f"Vault holds {balance_raw} base units of {token}"
 
@@ -138,7 +137,7 @@ class AxonSwap(BaseTool):
         "Swap tokens within the vault (rebalancing). The output stays in the vault. "
         "Specify target token, minimum output amount, and optionally source token and max spend."
     )
-    args_schema: Type[BaseModel] = SwapInput
+    args_schema: type[BaseModel] = SwapInput
     client: object = Field(exclude=True)
 
     def _run(
@@ -166,7 +165,7 @@ class AxonExecute(BaseTool):
         "executes the call, then revokes approval. You must provide the protocol address "
         "and ABI-encoded calldata."
     )
-    args_schema: Type[BaseModel] = ExecuteInput
+    args_schema: type[BaseModel] = ExecuteInput
     client: object = Field(exclude=True)
 
     def _run(
@@ -196,7 +195,7 @@ class AxonPoll(BaseTool):
         "('payment', 'swap', or 'execute'). Returns approved (with TX hash), "
         "still pending, or rejected (with reason)."
     )
-    args_schema: Type[BaseModel] = PollInput
+    args_schema: type[BaseModel] = PollInput
     client: object = Field(exclude=True)
 
     def _run(self, request_id: str, request_type: str = "payment") -> str:
@@ -221,7 +220,7 @@ class AxonX402(BaseTool):
         "header to retry the request. The full Axon pipeline applies (spending limits, "
         "AI verification, human review)."
     )
-    args_schema: Type[BaseModel] = X402Input
+    args_schema: type[BaseModel] = X402Input
     client: object = Field(exclude=True)
 
     def _run(self, payment_required_header: str) -> str:
@@ -248,16 +247,11 @@ class AxonVaultInfo(BaseTool):
         "Get information about the vault: owner address, operator address, "
         "whether the vault is paused, and the contract version."
     )
-    args_schema: Type[BaseModel] = VaultInfoInput
+    args_schema: type[BaseModel] = VaultInfoInput
     client: object = Field(exclude=True)
 
     def _run(self) -> str:
         info = self.client.get_vault_info()
         paused = "PAUSED" if info.paused else "active"
         operator = info.operator if info.operator != "0x" + "0" * 40 else "none"
-        return (
-            f"Vault status: {paused}\n"
-            f"Owner: {info.owner}\n"
-            f"Operator: {operator}\n"
-            f"Version: {info.version}"
-        )
+        return f"Vault status: {paused}\nOwner: {info.owner}\nOperator: {operator}\nVersion: {info.version}"

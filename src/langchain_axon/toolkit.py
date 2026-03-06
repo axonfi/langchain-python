@@ -47,9 +47,7 @@ class AxonToolkit:
         private_key = bot_private_key
         if private_key is None:
             if bot_keystore is None or bot_passphrase is None:
-                raise ValueError(
-                    "Provide either bot_private_key or both bot_keystore + bot_passphrase"
-                )
+                raise ValueError("Provide either bot_private_key or both bot_keystore + bot_passphrase")
             private_key = self._decrypt_keystore(bot_keystore, bot_passphrase)
 
         kwargs: dict = {
