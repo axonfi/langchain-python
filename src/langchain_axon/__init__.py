@@ -1,9 +1,9 @@
 """LangChain toolkit for Axon — treasury and payment infrastructure for autonomous AI agents."""
 
 from .toolkit import AxonToolkit
-from .tools import AxonBalance, AxonExecute, AxonPay, AxonPoll, AxonSwap, AxonVaultInfo
+from .tools import AxonBalance, AxonExecute, AxonPay, AxonPoll, AxonSwap, AxonVaultInfo, AxonX402
 
-__version__ = "0.1.0"
+__version__ = "0.1.1"
 
 __all__ = [
     "AxonToolkit",
@@ -13,4 +13,5 @@ __all__ = [
     "AxonExecute",
     "AxonPoll",
     "AxonVaultInfo",
+    "AxonX402",
 ]

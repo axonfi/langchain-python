@@ -64,6 +64,14 @@ class VaultInfoInput(BaseModel):
     pass
 
 
+class X402Input(BaseModel):
+    """Input for handling HTTP 402 Payment Required responses."""
+
+    payment_required_header: str = Field(
+        description="Value of the PAYMENT-REQUIRED header from the 402 response (base64 or JSON)"
+    )
+
+
 # ── Helper ───────────────────────────────────────────────────────────────────
 
 
@@ -200,6 +208,36 @@ class AxonPoll(BaseTool):
 
         result = poll_fn(request_id)
         return _format_result(result)
+
+
+class AxonX402(BaseTool):
+    """Handle HTTP 402 Payment Required responses from paywalled APIs."""
+
+    name: str = "axon_x402"
+    description: str = (
+        "Handle an HTTP 402 Payment Required response. Takes the PAYMENT-REQUIRED "
+        "header value, funds the bot's EOA from the vault, signs a token authorization "
+        "(EIP-3009 for USDC, Permit2 for other tokens), and returns a PAYMENT-SIGNATURE "
+        "header to retry the request. The full Axon pipeline applies (spending limits, "
+        "AI verification, human review)."
+    )
+    args_schema: Type[BaseModel] = X402Input
+    client: object = Field(exclude=True)
+
+    def _run(self, payment_required_header: str) -> str:
+        headers = {"PAYMENT-REQUIRED": payment_required_header}
+        result = self.client.x402_handle_payment_required(headers)
+        lines = [
+            "x402 payment handled!",
+            f"Status: {result.funding_result.get('status', 'unknown')}",
+            f"Amount: {result.selected_option.amount} (base units)",
+            f"Merchant: {result.selected_option.pay_to}",
+        ]
+        tx_hash = result.funding_result.get("txHash")
+        if tx_hash:
+            lines.append(f"TX: {tx_hash}")
+        lines.append(f"PAYMENT-SIGNATURE: {result.payment_signature}")
+        return "\n".join(lines)
 
 
 class AxonVaultInfo(BaseTool):
