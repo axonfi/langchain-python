@@ -28,17 +28,17 @@ Your wallet (vault owner) stays secure — the bot key can only sign intents wit
 
 ### Mainnet
 
-| Chain        | ID    |
-| ------------ | ----- |
-| Base         | 8453  |
-| Arbitrum One | 42161 |
+| Chain        | ID    | Status      |
+| ------------ | ----- | ----------- |
+| Base         | 8453  | Coming soon |
+| Arbitrum One | 42161 | Coming soon |
 
 ### Testnet
 
-| Chain            | ID     |
-| ---------------- | ------ |
-| Base Sepolia     | 84532  |
-| Arbitrum Sepolia | 421614 |
+| Chain            | ID     | Status |
+| ---------------- | ------ | ------ |
+| Base Sepolia     | 84532  | Live   |
+| Arbitrum Sepolia | 421614 | Live   |
 
 ## Quick Start
 
