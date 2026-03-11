@@ -1,6 +1,6 @@
 # langchain-axon
 
-LangChain toolkit for [Axon](https://axonfi.xyz) — treasury and payment infrastructure for autonomous AI agents.
+LangChain toolkit for [Axon](https://axonfi.xyz) — agentic finance with secure vaults for autonomous AI agents.
 
 Gives your LangChain agent 7 tools: pay, check balance, swap tokens, execute DeFi protocols, poll async requests, get vault info, and handle x402 paywalls.
 
@@ -81,15 +81,15 @@ AXON_BOT_PASSPHRASE=my-secret-passphrase
 
 ## Tools
 
-| Tool | Description |
-|------|-------------|
-| `axon_pay` | Send a payment from the vault |
-| `axon_balance` | Check vault token balance |
-| `axon_swap` | In-vault token rebalance |
-| `axon_execute` | DeFi protocol interaction (approve → call → revoke) |
-| `axon_poll` | Poll async payment/swap/execute status |
-| `axon_vault_info` | Get vault status, owner, paused state |
-| `axon_x402` | Handle HTTP 402 Payment Required paywalls |
+| Tool              | Description                                         |
+| ----------------- | --------------------------------------------------- |
+| `axon_pay`        | Send a payment from the vault                       |
+| `axon_balance`    | Check vault token balance                           |
+| `axon_swap`       | In-vault token rebalance                            |
+| `axon_execute`    | DeFi protocol interaction (approve → call → revoke) |
+| `axon_poll`       | Poll async payment/swap/execute status              |
+| `axon_vault_info` | Get vault status, owner, paused state               |
+| `axon_x402`       | Handle HTTP 402 Payment Required paywalls           |
 
 ## Individual Tools
 
