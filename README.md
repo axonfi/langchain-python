@@ -30,8 +30,9 @@ Your wallet (vault owner) stays secure — the bot key can only sign intents wit
 
 | Chain        | ID    | Status      |
 | ------------ | ----- | ----------- |
-| Base         | 8453  | Live |
-| Arbitrum One | 42161 | Live |
+| Base         | 8453  | Live        |
+| Arbitrum One | 42161 | Live        |
+| Ethereum     | 1     | Coming soon |
 
 ### Testnet
 
