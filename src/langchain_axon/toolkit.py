@@ -6,7 +6,7 @@ import json
 
 from langchain_core.tools import BaseTool
 
-from .tools import AxonBalance, AxonExecute, AxonPay, AxonPoll, AxonSwap, AxonVaultInfo, AxonX402
+from .tools import AxonBalance, AxonExecute, AxonPay, AxonPoll, AxonSwap, AxonVaultInfo, AxonVaultValue, AxonX402
 
 
 class AxonToolkit:
@@ -76,7 +76,7 @@ class AxonToolkit:
         return self._client
 
     def get_tools(self) -> list[BaseTool]:
-        """Return all 7 Axon tools sharing a single client."""
+        """Return all 8 Axon tools sharing a single client."""
         return [
             AxonPay(client=self._client),
             AxonBalance(client=self._client, chain_id=self._chain_id),
@@ -84,5 +84,6 @@ class AxonToolkit:
             AxonExecute(client=self._client),
             AxonPoll(client=self._client),
             AxonVaultInfo(client=self._client),
+            AxonVaultValue(client=self._client),
             AxonX402(client=self._client),
         ]

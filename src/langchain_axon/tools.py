@@ -1,4 +1,4 @@
-"""Axon LangChain tools — 6 BaseTool subclasses for vault operations."""
+"""Axon LangChain tools — 8 BaseTool subclasses for vault operations."""
 
 from __future__ import annotations
 
@@ -60,6 +60,12 @@ class PollInput(BaseModel):
 
 class VaultInfoInput(BaseModel):
     """Input for getting vault information (no parameters required)."""
+
+    pass
+
+
+class VaultValueInput(BaseModel):
+    """Input for getting vault total USD value (no parameters required)."""
 
     pass
 
@@ -255,3 +261,23 @@ class AxonVaultInfo(BaseTool):
         paused = "PAUSED" if info.paused else "active"
         operator = info.operator if info.operator != "0x" + "0" * 40 else "none"
         return f"Vault status: {paused}\nOwner: {info.owner}\nOperator: {operator}\nVersion: {info.version}"
+
+
+class AxonVaultValue(BaseTool):
+    """Get the total USD value of the vault with per-token breakdown."""
+
+    name: str = "axon_vault_value"
+    description: str = (
+        "Get the total USD value of the vault, including a breakdown by token. "
+        "Returns total value in USD and each token's balance, price, and value."
+    )
+    args_schema: type[BaseModel] = VaultValueInput
+    client: object = Field(exclude=True)
+
+    def _run(self) -> str:
+        value = self.client.get_vault_value()
+        lines = [f"Total vault value: ${value.total_value_usd:.2f}"]
+        for t in value.tokens:
+            human_balance = int(t.balance) / (10**t.decimals)
+            lines.append(f"  {t.symbol}: {human_balance:.6g} (${t.value_usd:.2f} @ ${t.price_usd:.4g})")
+        return "\n".join(lines)
